@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Zone 1 Patrol Log</title>
+  <script>
+    function submitForm() {
+      const name = document.getElementById("name").value;
+      const id = document.getElementById("id").value;
+      const zone = "zone1.html";
+
+      if (!name || !id) {
+        alert("Please enter both name and ID.");
+        return;
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          fetch("https://script.google.com/macros/u/1/s/AKfycbw2BNRwsJIB-JK5qPuqZ4Frg3p12j01N11Jo_Bj_KJuNyKCdYgUgG5g3-yvpk9fs0_Y/exec", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `name=${encodeURIComponent(name)}&id=${encodeURIComponent(id)}&zone=${zone}&lat=${lat}&lng=${lng}`
+          })
+          .then(response => response.text())
+          .then(result => {
+            alert("Submitted successfully!");
+            document.getElementById("form").reset();
+          })
+          .catch(error => alert("Error: " + error));
+        }, () => alert("Please allow location access."));
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>Zone 1 Patrol Log</h2>
+  <form id="form" onsubmit="event.preventDefault(); submitForm();">
+    <label>Guard Name:</label><br>
+    <input type="text" id="name" required><br><br>
+    <label>Guard ID:</label><br>
+    <input type="text" id="id" required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
